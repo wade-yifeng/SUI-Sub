@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>北海之南</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="shortcut icon" href="//soofruit.oss-cn-hangzhou.aliyuncs.com/app/icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=yes" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="renderer" content="webkit">
+    <link rel='stylesheet' type="text/css" href='http://m.sui.taobao.org/dist/css/sm.css'>
+    <!-- <link rel='stylesheet' type="text/css" href='public/app.css'> -->
+</head>
+
+<body>
+    <header class="bar bar-nav">
+        <h1 class='title'>下拉刷新</h1>
+    </header>
+    <!-- 单个page ,第一个.page默认被展示-->
+    <div class="page">
+        <!-- content应该拥有"pull-to-refresh-content"类,表示启用下拉刷新 -->
+        <div class="content pull-to-refresh-content">
+            <!-- 默认的下拉刷新层 -->
+            <div class="pull-to-refresh-layer">
+                <div class="preloader"></div>
+                <div class="pull-to-refresh-arrow"></div>
+            </div>
+            <!-- 下面是正文 -->
+            <div class="card-container">
+                <div class="card">
+                    <div class="card-header">card</div>
+                    <div class="card-content">
+                        <div class="card-content-inner">
+                            这里是第1个card，下拉刷新会出现第2个card。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src='http://soofruit.oss-cn-hangzhou.aliyuncs.com/app/js/iscroll.min.js'></script>
+    <script type="text/javascript" src='http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js'></script>
+    <script type="text/javascript" src='public/scroller.js'></script>
+    <!-- <script type="text/javascript" src='public/sm.js'></script> -->
+    <script type="text/javascript">
+    // 添加'refresh'监听器
+    $(document).on('refresh', '.pull-to-refresh-content', function(e) {
+        // 模拟2s的加载过程
+        setTimeout(function() {
+            var cardNumber = $(e.target).find('.card').length + 1;
+            var cardHTML = '<div class="card">' +
+                '<div class="card-header">card' + cardNumber + '</div>' +
+                '<div class="card-content">' +
+                '<div class="card-content-inner">' +
+                '这里是第' + cardNumber + '个card，下拉刷新会出现第' + (cardNumber + 1) + '个card。' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+            $(e.target).find('.card-container').prepend(cardHTML);
+            // 加载完毕需要重置
+            $.pullToRefreshDone('.pull-to-refresh-content');
+        }, 2000);
+    });
+    $.init();
+    </script>
+</body>
+
+</html>

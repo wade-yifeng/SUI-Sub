@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>北海之南</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="shortcut icon" href="//soofruit.oss-cn-hangzhou.aliyuncs.com/app/icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=yes" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="renderer" content="webkit">
+    <!-- <link rel='stylesheet' type="text/css" href='http://m.sui.taobao.org/dist/css/sm.css'> -->
+    <link rel='stylesheet' type="text/css" href='public/app.css'>
+    <style type="text/css">
+        .infinite-scroll-preloader {
+        margin-top:-20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 添加 class infinite-scroll 和 data-distance  向下无限滚动可不加infinite-scroll-bottom类，这里加上是为了和下面的向上无限滚动区分-->
+    <!-- 单个page ,第一个.page默认被展示-->
+    <div class="page">
+        <div class="content infinite-scroll infinite-scroll-bottom" data-distance="100">
+            <div class="list-block">
+                <ul class="list-container">
+                </ul>
+            </div>
+            <!-- 加载提示符 -->
+            <div class="infinite-scroll-preloader">
+                <div class="preloader"></div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src='http://soofruit.oss-cn-hangzhou.aliyuncs.com/app/js/iscroll.min.js'></script>
+    <script type="text/javascript" src='http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js'></script>
+    <script type="text/javascript" src='public/scroller.js'></script>
+    <script type="text/javascript">
+
+        // 加载flag
+        var loading = false;
+        // 最多可加载的条目
+        var maxItems = 100;
+
+        // 每次加载添加多少条目
+        var itemsPerLoad = 20;
+
+        function addItems(number, lastIndex) {
+            // 生成新条目的HTML
+            var html = '';
+            for (var i = lastIndex + 1; i <= lastIndex + number; i++) {
+              html += '<li class="item-content"><div class="item-inner"><div class="item-title">Item ' + i + '</div></div></li>';
+            }
+            // 添加新条目
+            $('.infinite-scroll-bottom .list-container').append(html);
+
+        }
+        
+        //预先加载20条
+        addItems(itemsPerLoad, 0);
+
+        // 上次加载的序号
+        var lastIndex = 20;
+
+        // 添加'refresh'监听器
+        $(document).on('refresh', '.pull-to-refresh-content', function(e) {
+            // 模拟2s的加载过程
+            setTimeout(function() {
+                // 添加新条目
+                addItems(itemsPerLoad, lastIndex);
+                // 加载完毕需要重置
+                $.pullToRefreshDone('.pull-to-refresh-content');
+            }, 2000);
+        });
+
+        // 注册'infinite'事件处理函数
+        $(document).on('infinite', '.infinite-scroll-bottom',function() {
+
+          // 如果正在加载，则退出
+          if (loading) return;
+
+          // 设置flag
+          loading = true;
+
+          // 模拟1s的加载过程
+          setTimeout(function() {
+              // 重置加载flag
+              loading = false;
+
+              if (lastIndex >= maxItems) {
+                  // 加载完毕，则注销无限加载事件，以防不必要的加载
+                  $.detachInfiniteScroll($('.infinite-scroll'));
+                  // 删除加载提示符
+                  $('.infinite-scroll-preloader').remove();
+                  return;
+              }
+
+              // 添加新条目
+              addItems(itemsPerLoad, lastIndex);
+              // 更新最后加载的序号
+              lastIndex = $('.list-container li').length;
+              //容器发生改变,如果是js滚动，需要刷新滚动
+              $.refreshScroller();
+          }, 2000);
+        });
+
+        $.init();
+    </script>
+</body>
+
+</html>
